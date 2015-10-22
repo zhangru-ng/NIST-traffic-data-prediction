@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'scala'
 apply plugin: 'eclipse'
 group='hadoop'
 sourceCompatibility = 1.7
@@ -12,7 +13,7 @@ eclipse {
 
 jar {
     manifest {
-        attributes 'Main-Class':'edu.ufl.ds.Main.main'
+        attributes 'Main-Class':'edu.uf.ds.cleaning.Cleaner'
     }
 }
 
@@ -21,7 +22,7 @@ repositories {
 }
 
 dependencies {
-	compile 'org.apache.spark:spark-core_2.10:1.5.1'
+	compile 'org.apache.spark:spark-core_2.11:1.5.1'
 
 }
 
