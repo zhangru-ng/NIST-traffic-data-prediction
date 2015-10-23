@@ -22,7 +22,9 @@ repositories {
 }
 
 dependencies {
-	compile 'org.apache.spark:spark-core_2.11:1.5.1'
+	compile 'org.apache.spark:spark-core_2.11:1.5.1',
+			'org.apache.spark:spark-mllib_2.11:1.5.1'
+	
 
 }
 
