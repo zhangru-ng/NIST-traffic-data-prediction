@@ -7,6 +7,15 @@ import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.regression.LinearRegressionWithSGD
 import org.apache.spark.mllib.regression.LinearRegressionModel
 import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.util.MLUtils
+import java.io.FileInputStream
+import org.apache.spark.mllib.util.Loader
+import net.razorvine.pyro.IOUtil
+import org.apache.spark.mllib.util.Loader
+import net.razorvine.pyro.IOUtil
+import sun.nio.ch.IOUtil
+import org.apache.spark.mllib.util.Loader
+
 /**
  *
  * @author mebin
@@ -44,24 +53,22 @@ object LinearRegression {
         LabeledPoint(classLabel, Vectors.dense(point))
     }.cache()
     val numIterations = 100
-    val model = LinearRegressionWithSGD.train(parsedData, numIterations, stepSize = 0.001)
+    val modelFilePath = "LinearRegModel"
+    val modelTrained = LinearRegressionWithSGD.train(parsedData, numIterations, stepSize = 0.001)
     // Evaluate model on training examples and compute training error
+    // build up the pmml evaluator
     val valuesAndPreds = parsedData.map { point =>
-      println("features " + point.features)
-      println("label " + point.label)
-      val prediction = model.predict(point.features)
+      val prediction = modelTrained.predict(point.features)
       (point.label, prediction)
     }
 
     val MSE = valuesAndPreds.map {
       case (v, p) =>
-        println("p val is " + p)
-        println("v val is " + v)
         math.pow((v - p), 2)
     }.mean()
     println("training Mean Squared Error = " + MSE)
     // Save and load model
-    model.save(spark, "/home/mebin/Documents/models")
-    val sameModel = LinearRegressionModel.load(spark, "/home/mebin/Documents/models")
+    modelTrained.save(spark, modelFilePath)
+    val sameModel = LinearRegressionModel.load(spark, modelFilePath)
   }
 }
