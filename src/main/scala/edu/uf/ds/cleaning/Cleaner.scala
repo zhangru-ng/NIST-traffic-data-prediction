@@ -50,24 +50,29 @@ object Cleaner {
       std += (fl - mean).toDouble * (fl - mean).toDouble
     }
     val stdDouble = Math.sqrt(std/count);
-    
+    var isNext = false
     for(line <- linesBuffer){
-      var flow = line.split(",")(3).toInt
+      if(isNext){
+        result += "\n"
+      }
+      var flow = line.trim().split(",")(3).toInt
       if(flow < 0){
-       result += line + OUTPUT_SEPERATOR + "0" + OUTPUT_SEPERATOR + "flow is negative"  
+       result += line.trim() + OUTPUT_SEPERATOR + "0" + OUTPUT_SEPERATOR + "flow is negative"  
       }
       else if(Math.abs(flow - mean) < 3 * std){
-        result += line + OUTPUT_SEPERATOR + "0" + OUTPUT_SEPERATOR + "unsimilar for same zone "
+        result += line.trim() + OUTPUT_SEPERATOR + "0" + OUTPUT_SEPERATOR + "unsimilar for same zone "
       }
       else{
-       result += line + OUTPUT_SEPERATOR + "1" 
+       result += line.trim() + OUTPUT_SEPERATOR + "1" 
       }
+      
+      isNext = true
     }
     result.mkString
   }
   def main(args: Array[String]): Unit = {
     val filePath = "/home/mebin/Downloads/outputjoin.csv";
-    val conf = new SparkConf().setAppName("Word Count").setMaster("local[2]");
+    val conf = new SparkConf().setAppName("Cleaner").setMaster("local[2]");
     val spark = new SparkContext(conf);
     val textFile: RDD[String] = spark.textFile(filePath)
     val format = new java.text.SimpleDateFormat("hh:mm") //07:05:08-05
