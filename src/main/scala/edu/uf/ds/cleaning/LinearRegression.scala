@@ -24,19 +24,15 @@ object LinearRegression {
   def main(args: Array[String]): Unit = {
     val OUTPUT_SEPERATOR = "\t"
     val filePath = "/home/mebin/Downloads/outputjoin.csv";
-    val conf = new SparkConf().setAppName("Word Count").setMaster("local[2]");
+    val conf = new SparkConf().setAppName("Linear Regression").setMaster("local[2]");
     val spark = new SparkContext(conf);
     ///home/mebin/Documents/spark-1.5.0/data/mllib/ridge-data/lpsa.data
     val dataSetPath = "/home/mebin/Downloads/clean_classifier/part-00000"
     val data = spark.textFile(dataSetPath)
-    println("The data is " + data)
-    println(data)
     val filteredData = data.filter { x => (x.split(OUTPUT_SEPERATOR)(x.split(OUTPUT_SEPERATOR).length-1)) == "1"  } // filter according to class label
     val parsedData = filteredData.map { line =>
       val parts = line.split(',')
         val classLabel = parts(3).toInt
-//        var point: Array[String] = null
-//        point = parts.slice(0, parts.length - 1)
         val date = parts(1)
         val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
         val month:Double = format.parse(date).getMonth
