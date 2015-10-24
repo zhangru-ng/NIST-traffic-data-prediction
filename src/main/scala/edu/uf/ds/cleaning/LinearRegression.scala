@@ -25,9 +25,9 @@ object LinearRegression {
     val OUTPUT_SEPERATOR = "\t"
     val filePath = "/home/mebin/Downloads/outputjoin.csv";
     val conf = new SparkConf().setAppName("Linear Regression").setMaster("local[2]");
-    val spark = new SparkContext(conf);
+    val spark:SparkContext = new SparkContext(conf);
     ///home/mebin/Documents/spark-1.5.0/data/mllib/ridge-data/lpsa.data
-    val dataSetPath = "/home/mebin/Downloads/clean_classifier/part-00000"
+    val dataSetPath = "/home/mebin/Downloads/clean_classifier"
     val data = spark.textFile(dataSetPath)
     val filteredData = data.filter { x => (x.split(OUTPUT_SEPERATOR)(x.split(OUTPUT_SEPERATOR).length-1)) == "1"  } // filter according to class label
     val parsedData = filteredData.map { line =>
@@ -48,7 +48,7 @@ object LinearRegression {
         val point:Array[Double] = Array(month, year, day, longitude, latitude, hour, min, sec)
         LabeledPoint(classLabel, Vectors.dense(point))
     }.cache()
-    val numIterations = 100
+    val numIterations = 10000
     val modelFilePath = "LinearRegModel"
     val modelTrained = LinearRegressionWithSGD.train(parsedData, numIterations, stepSize = 0.001)
     // Evaluate model on training examples and compute training error
@@ -65,6 +65,7 @@ object LinearRegression {
     println("training Mean Squared Error = " + MSE)
     // Save and load model
     modelTrained.save(spark, modelFilePath)
-    val sameModel = LinearRegressionModel.load(spark, modelFilePath)
+    println(modelTrained.toPMML())
+//    val sameModel = LinearRegressionModel.load(spark, modelFilePath)
   }
 }
