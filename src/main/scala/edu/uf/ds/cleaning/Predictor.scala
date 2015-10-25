@@ -24,7 +24,7 @@ object Predictor {
     //Get all wront values
     val filteredData = data.filter { x => (x.split(OUTPUT_SEPERATOR)(x.split(OUTPUT_SEPERATOR).length-2)) == "0"  } // filter according to class label
     val regressionModel = LinearRegressionModel.load(spark, modelFilePath)
-    
+    filteredData.foreach(x => println(x))
     val parsedData = filteredData.map { line =>
       val parts = line.split(',')
         val classLabel = parts(3).toInt
@@ -44,7 +44,7 @@ object Predictor {
         LabeledPoint(classLabel, Vectors.dense(point))
     }.cache()
     println("before starting!!")
-    val numIterations = 100
+//    val numIterations = 100
     val valuesAndPreds = parsedData.map { point =>
       val prediction = regressionModel.predict(point.features)
       (point.label, prediction)

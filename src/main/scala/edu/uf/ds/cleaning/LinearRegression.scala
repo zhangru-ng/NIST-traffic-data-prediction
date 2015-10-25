@@ -37,7 +37,7 @@ object LinearRegression {
         val day:Double = format.parse(date).getDay
         val longitude:Double = parts(17).toDouble
         val latitude:Double = parts(16).toDouble
-        //hout min sec
+        //hour min sec
         val timeFormat = new java.text.SimpleDateFormat("hh:mm:ss")
         val hour:Double = format.parse(date).getHours
         val min:Double = format.parse(date).getMinutes

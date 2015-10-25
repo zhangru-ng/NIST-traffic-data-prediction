@@ -73,7 +73,7 @@ object Cleaner {
   }
   def main(args: Array[String]): Unit = {
     val filePath = Configuration.joinInputFilePath
-    val conf = new SparkConf().setAppName("Cleaner").setMaster("local[2]");
+    val conf = new SparkConf().setAppName("Cleaner").setMaster("local[32]");
     val spark = new SparkContext(conf);
     val textFile: RDD[String] = spark.textFile(filePath)
     val format = new java.text.SimpleDateFormat("hh:mm") //07:05:08-05
