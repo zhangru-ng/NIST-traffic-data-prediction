@@ -23,12 +23,9 @@ import org.apache.spark.mllib.util.Loader
 object LinearRegression {
   def main(args: Array[String]): Unit = {
     val OUTPUT_SEPERATOR = "\t"
-    val filePath = "/home/mebin/Downloads/outputjoin.csv";
     val conf = new SparkConf().setAppName("Linear Regression").setMaster("local[2]");
     val spark:SparkContext = new SparkContext(conf);
-    ///home/mebin/Documents/spark-1.5.0/data/mllib/ridge-data/lpsa.data
-    val dataSetPath = "/home/mebin/Downloads/clean_classifier"
-    val data = spark.textFile(dataSetPath)
+    val data = spark.textFile(Configuration.classifierOutput)
     val filteredData = data.filter { x => (x.split(OUTPUT_SEPERATOR)(x.split(OUTPUT_SEPERATOR).length-1)) == "1"  } // filter according to class label
     val parsedData = filteredData.map { line =>
       val parts = line.split(',')
@@ -49,7 +46,6 @@ object LinearRegression {
         LabeledPoint(classLabel, Vectors.dense(point))
     }.cache()
     val numIterations = 10000
-    val modelFilePath = "LinearRegModel"
     val modelTrained = LinearRegressionWithSGD.train(parsedData, numIterations, stepSize = 0.001)
     // Evaluate model on training examples and compute training error
     // build up the pmml evaluator
@@ -63,9 +59,7 @@ object LinearRegression {
         math.pow((v - p), 2)
     }.mean()
     println("training Mean Squared Error = " + MSE)
-    // Save and load model
-    modelTrained.save(spark, modelFilePath)
-    println(modelTrained.toPMML())
-//    val sameModel = LinearRegressionModel.load(spark, modelFilePath)
+    // Save model
+    modelTrained.save(spark, Configuration.modelFilePath)
   }
 }

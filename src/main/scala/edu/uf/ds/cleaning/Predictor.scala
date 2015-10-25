@@ -15,11 +15,11 @@ import org.apache.spark.mllib.regression.LinearRegressionModel
 object Predictor {
   def main(args: Array[String]): Unit = {
     val OUTPUT_SEPERATOR = "\t"
-    val modelFilePath = "LinearRegModel"
+    val modelFilePath = Configuration.modelFilePath
     val conf = new SparkConf().setAppName("Linear Regression Predictor").setMaster("local[2]");
     val spark = new SparkContext(conf);
     val sameModel = LinearRegressionModel.load(spark, modelFilePath)
-    val dataSetPath = "/home/mebin/Downloads/clean_classifier/part-00000"
+    val dataSetPath = Configuration.classifierOutput
     val data = spark.textFile(dataSetPath)
     //Get all wront values
     val filteredData = data.filter { x => (x.split(OUTPUT_SEPERATOR)(x.split(OUTPUT_SEPERATOR).length-2)) == "0"  } // filter according to class label

@@ -6,6 +6,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
 import org.apache.spark.rdd.RDD
 import scala.collection.mutable.ListBuffer
+import com.typesafe.config.ConfigFactory
 
 /**
  * @author mebin
@@ -71,7 +72,7 @@ object Cleaner {
     result.mkString
   }
   def main(args: Array[String]): Unit = {
-    val filePath = "/home/mebin/Downloads/outputjoin.csv";
+    val filePath = Configuration.joinInputFilePath
     val conf = new SparkConf().setAppName("Cleaner").setMaster("local[2]");
     val spark = new SparkContext(conf);
     val textFile: RDD[String] = spark.textFile(filePath)
@@ -80,7 +81,7 @@ object Cleaner {
     val mapOutput = textFile.map(line => (line.split(",")(6) + line.split(",")(1).split(" ")(0) + ((format.parse(line.split(",")(1).split(" ")(1)).getHours * 60) + format.parse(line.split(",")(1).split(" ")(1)).getMinutes) / 1,
       line))
       .groupByKey().mapValues(reduce)
-    mapOutput.map(x => x._2).saveAsTextFile("/home/mebin/Downloads/clean_classifier")
+    mapOutput.map(x => x._2).saveAsTextFile(Configuration.classifierOutput)
 
     //TODO : Put file with correct label in different file and update linear regression
   }
