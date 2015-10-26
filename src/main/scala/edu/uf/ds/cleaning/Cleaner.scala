@@ -40,9 +40,12 @@ object Cleaner {
     var linesBuffer = new ListBuffer[String]
     for (line <- listOfLines) {
       var flow = line.split(",")(3).toInt
+      if(flow >= 0){
       mean += flow
       count += 1
       listBuffer.append(flow)
+    }
+      
       linesBuffer.append(line)
     }
     mean = mean/count
@@ -60,7 +63,7 @@ object Cleaner {
       if(flow < 0){
        result += line.trim() + OUTPUT_SEPERATOR + "0" + OUTPUT_SEPERATOR + "flow is negative"  
       }
-      else if(Math.abs(flow - mean) < 3 * std){
+      else if(Math.abs(flow - mean) >  std){
         result += line.trim() + OUTPUT_SEPERATOR + "0" + OUTPUT_SEPERATOR + "unsimilar for same zone "
       }
       else{
@@ -73,7 +76,7 @@ object Cleaner {
   }
   def main(args: Array[String]): Unit = {
     val filePath = Configuration.joinInputFilePath
-    val conf = new SparkConf().setAppName("Cleaner").setMaster("local[32]");
+    val conf = new SparkConf().setAppName("Cleaner").setMaster("local[2]")
     val spark = new SparkContext(conf);
     val textFile: RDD[String] = spark.textFile(filePath)
     val format = new java.text.SimpleDateFormat("hh:mm") //07:05:08-05
