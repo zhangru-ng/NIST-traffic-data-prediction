@@ -36,7 +36,7 @@ object LinearRegression {
         val longitude:Double = parts(17).toDouble
         val latitude:Double = parts(16).toDouble
         val time = (format.parse(date).getTime)/(format.parse("2016-01-01 00:00:00").getTime)
-        val point:Array[Double] = Array(time, longitude/180, latitude/90)
+        val point:Array[Double] = Array(time, (longitude+180)/360, (latitude+90)/180)
         LabeledPoint(classLabel/max_flow, Vectors.dense(point))
     }.persist()
     val numIterations = 10000
@@ -52,7 +52,7 @@ object LinearRegression {
 
     val MSE = valuesAndPreds.map {
       case (v, p) =>
-        println("v and p are - ", v, " nd ",p)
+//        println("v and p are - ", v, " nd ",p)
         math.pow((v - p), 2)
     }.mean()
     println("training Mean Squared Error = " + MSE)
