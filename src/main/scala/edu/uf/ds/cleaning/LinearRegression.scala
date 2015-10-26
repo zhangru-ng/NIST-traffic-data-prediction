@@ -38,7 +38,7 @@ object LinearRegression {
         val time = (format.parse(date).getTime)/(format.parse("2016-01-01 00:00:00").getTime)
         val point:Array[Double] = Array(time, longitude/180, latitude/90)
         LabeledPoint(classLabel/max_flow, Vectors.dense(point))
-    }.cache()
+    }.persist()
     val numIterations = 10000
     val iw = Vectors.dense(0.5, 2, 3, 2, 6, 7)
     val modelTrained = LinearRegressionWithSGD.train(parsedData, numIterations, stepSize = 1/*,miniBatchFraction=0.2,initialWeights=iw*/ )
