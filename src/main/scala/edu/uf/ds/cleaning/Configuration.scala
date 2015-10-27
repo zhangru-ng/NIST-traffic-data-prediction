@@ -10,4 +10,5 @@ object Configuration {
   val modelFilePath = conf.getString("modelPath")
   val joinInputFilePath = conf.getString("joinInputFile")
   val classifierOutput = conf.getString("classifierOutput")
+  val predictorOutput = conf.getString("predictorOutput")
 }

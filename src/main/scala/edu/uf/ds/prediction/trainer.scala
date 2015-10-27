@@ -1,29 +1,19 @@
-package edu.uf.ds.cleaning
+package edu.uf.ds.prediction
 
+import org.apache.spark.mllib.regression.LinearRegressionWithSGD
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
+import java.io.File
+import edu.uf.ds.cleaning.Configuration
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.regression.LinearRegressionWithSGD
-import org.apache.spark.mllib.regression.LinearRegressionModel
-import org.apache.spark.rdd.RDD
-import org.apache.spark.mllib.util.MLUtils
-import java.io.FileInputStream
-import org.apache.spark.mllib.util.Loader
-import net.razorvine.pyro.IOUtil
-import org.apache.spark.mllib.util.Loader
-import net.razorvine.pyro.IOUtil
-import sun.nio.ch.IOUtil
-import org.apache.spark.mllib.util.Loader
-import java.io.File
 import java.util.Date
-import org.apache.spark.mllib.regression.RidgeRegressionWithSGD
 
 /**
- *
  * @author mebin
  */
-object LinearRegression {
+object trainer {
+  
   def writeToFile(p: String, s: String): Unit = {
     val pw = new java.io.PrintWriter(new File(p))
     try pw.write(s) finally pw.close()
@@ -71,4 +61,6 @@ object LinearRegression {
     // Save model
     modelTrained.save(spark, Configuration.modelFilePath)
   }
+
+  
 }
