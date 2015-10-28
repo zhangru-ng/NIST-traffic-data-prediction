@@ -7,6 +7,7 @@ import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
 import org.apache.spark.rdd.RDD
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
+import com.typesafe.config.ConfigFactory
 /**
  * @author sudeep
  */
@@ -61,38 +62,33 @@ object NearbyZones {
    * Reduce Function
    */
    def reduce(listOfLines: Iterable[String]): String = {
-    
-    
-    var linesBuffer = new ListBuffer[String]
-
-    //List of neighbours flow values
-    val result = new ListBuffer[Int]
-    
-    
-    var res = new ListBuffer[String]
-    
-
-    //var newLine = new String
-    for (resultLine <- listOfLines) {
-              //println(line)
-      
-              //Only flow value present in the string
+      var linesBuffer = new ListBuffer[String]
+      //List of neighbours flow values
+      val result = new ListBuffer[Int]
+      var res = new ListBuffer[String]
+      var isNext = false
+      //var newLine = new String
+      for (resultLine <- listOfLines) {
          if(resultLine.split(",").size ==1) {
-            result+= resultLine.toInt
+            result+= resultLine.trim().toInt
 			    } else {
 			        //Output of previous join should be 1
 			        if(resultLine.split("\t")(1).toInt > 0 ) {
 			          //println("Prediction value correct"+resultLine)
 			          result+= resultLine.split(",")(3).toInt
-			          linesBuffer.append(resultLine)
+			          linesBuffer.append(resultLine.trim())
 			        } else {
-			          res+=(resultLine)    
+			          if(isNext){
+                   res += "\n"
+                }
+			          res+=(resultLine.trim()) 
+			          isNext = true
 			        }
 				      
 				      
 				 }
     }
-    var isNext = false
+     isNext = false
 
     var mean:Double = 0
     
@@ -105,20 +101,20 @@ object NearbyZones {
     
     
     for(newLine <- linesBuffer) {
-      val flow = newLine.split(",")(3).toInt
-      //if(isNext){
-      //   res += "\n"
-      //}
+      val flow = newLine.trim().split(",")(3).toInt
+      if(isNext){
+         res += "\n"
+      }
       if(newLine.split("\t")(1).toInt == 0) {
-        res+= newLine			        
+        res+= newLine.trim()			        
         
       } else if (Math.abs(flow-mean) <= 3.0 * stddev ) {
          //println("correct value " + newLine.split("\t")(0) + "mean: " + mean.toString() + "stddev: " + stddev.toString())
 
-          res+= newLine.split("\t")(0) + OUTPUT_SEPERATOR + "1" + OUTPUT_SEPERATOR + "Correct"
+          res+= newLine.trim().split("\t")(0) + OUTPUT_SEPERATOR + "1" + OUTPUT_SEPERATOR + "\"Correct\""
       } else {
           println("Incorrect value " + newLine + "mean: " + mean.toString() + "stddev: " + stddev.toString())
-          res+= newLine.split("\t")(0) + OUTPUT_SEPERATOR + "0" + OUTPUT_SEPERATOR + "InCorrect nearby zone flows not similar"
+          res+= newLine.trim().split("\t")(0) + OUTPUT_SEPERATOR + "0" + OUTPUT_SEPERATOR + "\"InCorrect nearby zone flows not similar\""
       }
       
             isNext = true
@@ -130,7 +126,7 @@ object NearbyZones {
   }
   def main(args: Array[String]): Unit = {
     
-    val filePath = "/home/sudeepgaddam/data_science/labs/nist/data/clean_classifier/";
+    val filePath = Configuration.sudeepPath + "clean_classifier/";
         val conf = new SparkConf().setAppName("NearbyGroups").setMaster("local[2]");
     val spark = new SparkContext(conf);
 
@@ -152,7 +148,7 @@ object NearbyZones {
       x => println(x+",")
     }
     val mapOutput = textFile.flatMap(line => (emitNeighbourFlows(line,neighbourMap))).groupByKey().mapValues(reduce)
-    mapOutput.map(x => x._2).saveAsTextFile("/home/sudeepgaddam/data_science/labs/nist/data/nearby")
+    mapOutput.map(x => x._2).saveAsTextFile(Configuration.sudeepPath + "nearby")
 
     
     //val cache = collection.mutable.Map[Int, Int]()
