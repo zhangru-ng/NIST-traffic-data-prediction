@@ -1,7 +1,7 @@
 # NIST traffic data prediction
 ## Prediction task
 **Description**: 
-participants will develop a system that can predict the number and types of traffic events by type for a given (geographical bounding, interval of time) pair.
+Participants will develop a system that can predict the number and types of traffic events by type for a given (geographical bounding, interval of time) pair.
 
 **Input**: 
 geographical bounding boxes and time intervals.
@@ -43,3 +43,15 @@ regression target.
   *  Select a regression model.
     * Polynomial regression
     * Gaussian Process for regression
+    
+    
+##Python prediction using SCI-KIT 
+prediction.py contains prediction code for various events like accidents, precipitation, etc. The prediction learning 
+is done separately for each bounding box and event type. The learned models are then used to predict over a given a new 
+data set. The feature vector used each time for learning is date and event type.
+
+Types of regression models used :- 
+1. Linear Regression
+2. SVR
+3. K nearest neighbours
+
